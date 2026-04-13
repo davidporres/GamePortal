@@ -1,9 +1,10 @@
+import Game.Game;
 import java.util.Collections;
 import java.util.ArrayList;
 import java.awt.event.KeyEvent;
 //i had to delete almost all of the spaces to make it only 300 lines :(
 //so now it's kinda chopped but whatever it works
-public class ERS extends CardGame {
+public class ERS extends CardGame{
     private static final int cards_per_player = 26;
     // stack positions
     private static final int p1x = 80;
