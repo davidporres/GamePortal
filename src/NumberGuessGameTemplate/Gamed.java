@@ -1,8 +1,9 @@
+package NumberGuessGameTemplate;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
-public class Game {
+public class Gamed {
     private int guesses;
     private int numToGuess;
     private final int low;
@@ -12,7 +13,7 @@ public class Game {
     private final ArrayList<Integer> guessesList = new ArrayList<>();
     private final Random rand = new Random();
 
-    public Game(int low, int high) {
+    public Gamed(int low, int high) {
         // Fix swapped bounds
         if (low > high) {
             int temp = low;

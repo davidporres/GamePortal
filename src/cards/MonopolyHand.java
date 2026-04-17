@@ -1,3 +1,4 @@
+package cards;
 import processing.core.PApplet;
 
 public class MonopolyHand extends Hand {

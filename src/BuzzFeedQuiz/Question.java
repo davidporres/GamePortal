@@ -1,3 +1,4 @@
+package BuzzFeedQuiz;
 import java.util.Scanner;
 
 public class Question {

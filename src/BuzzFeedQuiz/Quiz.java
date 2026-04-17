@@ -1,9 +1,12 @@
+package BuzzFeedQuiz;
+import java.io.File;
 import java.util.Scanner;
 
-public class Quiz {
+import Game.*;
+public class Quiz implements Game {
     static Scanner sc = new Scanner(System.in);
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception{
         // Create Categories
         Category baguette = new Category("Baguette",
                 "You are steady, confident, and effortlessly put-together.\n"
@@ -189,5 +192,28 @@ public class Quiz {
             // valid
             return tiedIndices[choice - 1];
         }
+    }
+
+    @Override
+    public String getGameName() {
+        return "BuzzFeed Quiz";
+    }
+
+    @Override
+    public void play() {
+        gameIntro();
+    }
+
+    @Override
+    public String getScore() {
+        
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getScore'");
+    }
+
+    @Override
+    public void writeHighScore(File f) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'writeHighScore'");
     }
 }

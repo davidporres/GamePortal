@@ -1,3 +1,4 @@
+package BuzzFeedQuiz;
 public class Answer {
     String label;
     Category cat;

@@ -1,10 +1,12 @@
-import Game.Game;
+package cards;
+import Game.*;
 import java.util.Collections;
 import java.util.ArrayList;
 import java.awt.event.KeyEvent;
+import java.io.File;
 //i had to delete almost all of the spaces to make it only 300 lines :(
 //so now it's kinda chopped but whatever it works
-public class ERS extends CardGame{
+public class ERS extends CardGame implements Game{
     private static final int cards_per_player = 26;
     // stack positions
     private static final int p1x = 80;
@@ -298,4 +300,24 @@ private void endGame(String msg) {
     winnerText = msg;
     System.out.println(msg);
     }
+@Override
+public String getGameName() {
+    return "ERS";
+}
+@Override
+public void play() {
+    createDeck();
+    initializeGame();
+}
+@Override
+public String getScore() {
+    // TODO Auto-generated method stub
+    return "Player 1: " + playerOneHand.getSize() + " | Player 2: " + playerTwoHand.getSize();
+}
+@Override
+public void writeHighScore(File f) {
+    // TODO Auto-generated method stub
+    return ;
+    // throw new UnsupportedOperationException("Unimplemented method 'writeHighScore'");
+}
 }

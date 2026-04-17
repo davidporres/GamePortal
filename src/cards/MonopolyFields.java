@@ -1,3 +1,4 @@
+package cards;
 public class MonopolyFields {
     static final String RAILROAD = "Railroad";
     static final String UTILITY = "Utility";
