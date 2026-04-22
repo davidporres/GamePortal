@@ -5,6 +5,10 @@ import java.util.Scanner;
 public class ErrorCheck {
 
     public static int getInt(Scanner sc) {
-        return sc.nextInt(); // add error checking here!
+        while (!sc.hasNextInt()) {
+            System.out.println("Invalid input. Please enter a number.");
+            sc.next(); // discard bad token
+        }
+        return sc.nextInt();
     }
 }

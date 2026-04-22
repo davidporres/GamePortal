@@ -1,12 +1,33 @@
 package BuzzFeedQuiz;
+
 import java.io.File;
 import java.util.Scanner;
 
 import Game.*;
-public class Quiz implements Game {
+
+public class Quiz implements GameWriteable {
     static Scanner sc = new Scanner(System.in);
 
-    public static void main(String[] args) throws Exception{
+    // track result of the most recent game
+    private int lastMaxPoints = 0;
+    private String lastWinnerLabel = "N/A";
+
+    public static void main(String[] args) {
+        Quiz q = new Quiz();
+        q.play();
+    }
+
+    @Override
+    public String getGameName() {
+        return "BuzzFeed Quiz";
+    }
+
+    @Override
+    public void play() {
+        // reset state for this round
+        lastMaxPoints = 0;
+        lastWinnerLabel = "N/A";
+
         // Create Categories
         Category baguette = new Category("Baguette",
                 "You are steady, confident, and effortlessly put-together.\n"
@@ -28,12 +49,11 @@ public class Quiz implements Game {
               + "Calm but curious, peaceful but never boring.\n"
               + "You notice details others miss and drift toward anything you find interesting.");
 
-
         // Create Questions
         Question q1 = new Question("It's Saturday morning. What are you doing?");
         q1.possibleAnswers[0] = new Answer("Meeting some friends for brunch, what else?", bagel);
         q1.possibleAnswers[1] = new Answer("Getting ahead on some work for the weekend.", baguette);
-        q1.possibleAnswers[2] = new Answer("Sleeping in and having a cozy breakfast at home, also probably watching tv or something.", milkroll);
+        q1.possibleAnswers[2] = new Answer("Sleeping in and having a cozy breakfast at home.", milkroll);
         q1.possibleAnswers[3] = new Answer("Doing something fun and artsy in the city.", focaccia);
 
         Question q2 = new Question("Choose a drink.");
@@ -78,7 +98,7 @@ public class Quiz implements Game {
         q8.possibleAnswers[2] = new Answer("Go back to sleep, obviously.", milkroll);
         q8.possibleAnswers[3] = new Answer("Start a hobby project you've been thinking about.", focaccia);
 
-        // Intro + play
+        // Intro
         gameIntro();
 
         // Ask all questions
@@ -100,7 +120,24 @@ public class Quiz implements Game {
         System.out.println("If you were a bread, you would be " + cList[winnerIndex].label + "!");
         System.out.println(cList[winnerIndex].description);
 
-        sc.close();
+        // save score: max points any category got
+        lastMaxPoints = cList[winnerIndex].points;
+        lastWinnerLabel = cList[winnerIndex].label;
+    }
+
+    @Override
+    public String getScore() {
+        return String.valueOf(lastMaxPoints);
+    }
+
+    @Override
+    public boolean isHighScore(String score, String currentHighScore) {
+        if (currentHighScore == null) return true;
+        try {
+            return Integer.parseInt(score) > Integer.parseInt(currentHighScore); // higher = better
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     public static void gameIntro() {
@@ -111,65 +148,48 @@ public class Quiz implements Game {
         while (true) {
             if (!sc.hasNextInt()) {
                 System.out.println("Unidentifiable input. Please enter '1' to play.");
-                sc.next(); // throw away bad input
+                sc.next();
                 continue;
             }
             int play = sc.nextInt();
             if (play == 1) {
                 System.out.println();
-                return; // valid, continue
+                return;
             } else {
                 System.out.println("Unidentifiable input. Please enter '1' to play.");
             }
         }
     }
-    
-   //either says the winner or says there's a tie and does a tiebreaker
+
     public static int getWinnerIndexWithTiebreak(Category[] cats, Scanner sc) {
-        // 1. find max points
         int max = 0;
         for (Category c : cats) {
-            if (c.points > max) {
-                max = c.points;
-            }
+            if (c.points > max) max = c.points;
         }
-        // 2. count how many are tied for max
         int tieCount = 0;
         for (Category c : cats) {
-            if (c.points == max) {
-                tieCount++;
-            }
+            if (c.points == max) tieCount++;
         }
-        // 3. if no tie, return the single max
         if (tieCount <= 1) {
             for (int i = 0; i < cats.length; i++) {
-                if (cats[i].points == max) {
-                    return i;
-                }
+                if (cats[i].points == max) return i;
             }
         }
-        // 4. if tie: collect tied indices
+        // tie: collect tied indices
         int[] tiedIndices = new int[tieCount];
         int idx = 0;
         for (int i = 0; i < cats.length; i++) {
-            if (cats[i].points == max) {
-                tiedIndices[idx] = i;
-                idx++;
-            }
+            if (cats[i].points == max) tiedIndices[idx++] = i;
         }
-        // 5. qnnounce tie
         System.out.println();
         System.out.print("You're tied between: ");
         for (int i = 0; i < tiedIndices.length; i++) {
             System.out.print(cats[tiedIndices[i]].label);
-            if (i < tiedIndices.length - 1) {
-                System.out.print(", ");
-            }
+            if (i < tiedIndices.length - 1) System.out.print(", ");
         }
         System.out.println(".");
         System.out.println("Time for a tiebreaker question!");
 
-        // 6. tiebreaker question (only among tied categories)
         while (true) {
             System.out.println();
             System.out.println("TIEBREAKER: Which of these feels most like you right now?");
@@ -177,10 +197,9 @@ public class Quiz implements Game {
                 System.out.println("[" + (i + 1) + "]: " + cats[tiedIndices[i]].label);
             }
             System.out.println("Enter a number between 1 and " + tiedIndices.length + ":");
-
             if (!sc.hasNextInt()) {
                 System.out.println("Unidentifiable input. Please enter a number between 1 and " + tiedIndices.length + ".");
-                sc.next(); // discard if bad
+                sc.next();
                 continue;
             }
             int choice = sc.nextInt();
@@ -188,32 +207,7 @@ public class Quiz implements Game {
                 System.out.println("Unidentifiable input. Please enter a number between 1 and " + tiedIndices.length + ".");
                 continue;
             }
-
-            // valid
             return tiedIndices[choice - 1];
         }
-    }
-
-    @Override
-    public String getGameName() {
-        return "BuzzFeed Quiz";
-    }
-
-    @Override
-    public void play() {
-        gameIntro();
-    }
-
-    @Override
-    public String getScore() {
-        
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getScore'");
-    }
-
-    @Override
-    public void writeHighScore(File f) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'writeHighScore'");
     }
 }
